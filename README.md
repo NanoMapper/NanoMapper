@@ -7,7 +7,7 @@ A super-small object mapping library for .NET
 ## The basics
 
 NanoMapper.NET's sole purpose in life is to alleviate the tediousness
-of mapping (applying) the values from one object (source) on to some other object (target).
+of mapping (applying) the values from one object (source) onto another (target).
 
 This is accomplished using the `ApplyTo(...)` object extension method.
 
@@ -15,46 +15,45 @@ This is accomplished using the `ApplyTo(...)` object extension method.
 
 ### Configuring object mappings
 
-NanoMapper automatically matches the properties from both sides
- based on the names and type value.
+NanoMapper.NET automatically matches the properties from both sides,
+ using their names and types.
 
-The property analysis process is generally performed only once for any given pair of
-source / target type combinations. Once made, a mapping function is stored in a
-global cache to enable super-fast future applications.
+Property analysis is *generally* performed once for any pair of
+source / target object type combination. Once made, the mapping configuration
+is cached so future applications execute super-fast.
 
 Because of this it is recommended that most mappings be pre-configured once during
-the applications startup process.
+the application startup process.
 
-This is done through the default, global mapper class `Mapper`.
+This is done through the global `Mapper` class' `Configure(...)` method, which takes in a mapping configuration function used to map the source type's properties to the target's.
 
-    Mapper.Configure<SourceType, TargetType>(map => {
-      // configure custom global mappings here...
-    });
-
-The `Configure(...)` method takes a function who's argument is a 
+    // Configure the mapping between SourceType and TargetType objects
+    Mapper.Configure<SourceType, TargetType>(map => { ... });
 
 #### Mapping properties
 
-By default, a mapper will try to match the properties up of both objects
-using the property's name and type.
+By default, a mapper will match all properties using the property names and types.
+As such, properties that exist on both source and target objects that match in both name and type
+will be automatically configured and don't require explicit configurations.
 
-To explicitly configure a target's property mapping, we use the `map.Property(...)` method.
+However, to explicitly configure a target's property mapping, we use the `map.Property(...)` method.
 
     map.Property(t => t.Property, s => s.OtherProperty);
 
-Here the `t` parameter represents the "target" type, the `s` parameter representing the "source" object.
+Here the `t` parameter represents the "target", the `s` parameter representing the "source".
 
-When no suitable implicit conversion exists between the source and target property types
-you must provide a translation function that can be called to perform the value mapping.
+You must provide a translation function that can be called to perform the value mapping
+when no suitable implicit conversion exists between the source and target property types.
 
     map.Property(t => t.Property, s => s.OtherPropertyWithDifferentType, v => CodeToTranslateSourceValueToTargetValue(v));
 
-Use the source object overload when you need to map a value that requires multiple source properties,
-or when the value is conditional, or complex.
+When you need to map a property that requires access to the whole source object, we use the source object overload .
 
     map.Property(t => t.Property, s => CodeToTranslateSourceTypeToTargetTypeValue(s));
 
-> Note: Annonymous target types are not supported (yet!) as they are immutable as their properties cannot be set using the current implementation. You can however use them as source objects.
+The is especially useful when the intended value is conditional, or highly complex;
+
+> Note: Annonymous target types are not supported (yet!) as they are immutable and not compatible with the current implementation. You can however use them as source objects.
 
 #### Ignoring properties
 
