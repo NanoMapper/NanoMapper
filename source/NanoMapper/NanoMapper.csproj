@@ -7,13 +7,16 @@
     <Authors>Gary Doublé</Authors>
     <Company>NanoMapper.NET (Gary Doublé)</Company>
     <Product>NanoMapper.NET</Product>
-    <Copyright>Copyright (c) 2017 Gary Doublé</Copyright>
+    <Copyright>Copyright (c) 2017 NanoMapper.NET (Gary Doublé)</Copyright>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/garydouble/NanoMapper.NET</RepositoryUrl>
     <PackageProjectUrl>https://github.com/garydouble/NanoMapper.NET</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/garydouble/NanoMapper.NET/blob/master/LICENSE</PackageLicenseUrl>
     <PackageIconUrl>A super-simple object mapping library for .NET</PackageIconUrl>
-    <AssemblyVersion>1.0.*</AssemblyVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Description>The superbly simple, thread safe object mapping library for .NET</Description>
+    <PackageTags>mapping library threadsafe mapper</PackageTags>
+    <PackageReleaseNotes>${Doublé: Engineering the future; one line at a time...}</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -1,19 +1,19 @@
 # NanoMapper.NET
 
-A super-small object mapping library for .NET
+The superbly simple, thread safe object mapping library for .NET
 
     PM> Install-Package NanoMapper
 
 ## The basics
 
-NanoMapper.NET's sole purpose in life is to alleviate the tediousness
-of mapping (applying) values from one object (source) onto another (target).
+NanoMapper's sole purpose in life is to alleviate the supremely tedious business
+of mapping (applying) some object (the source) to some other object (the target).
 
 This is accomplished using the `ApplyTo(...)` object extension method.
 
     source.ApplyTo(target);
 
-NanoMapper.NET automatically matches the properties from both sides,
+NanoMapper automatically matches the properties from both sides,
  using their names and types.
 
 > Note: Annonymous target types are not supported (yet!) as they are immutable and not compatible with the current implementation. You can however use them as source objects.
