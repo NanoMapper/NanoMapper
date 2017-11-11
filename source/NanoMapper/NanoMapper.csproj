@@ -2,6 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.5</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Authors>Gary Doublé</Authors>
+    <Company>NanoMapper.NET (Gary Doublé)</Company>
+    <Product>NanoMapper.NET</Product>
+    <Copyright>Copyright (c) 2017 Gary Doublé</Copyright>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/garydouble/NanoMapper.NET</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/garydouble/NanoMapper.NET</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/garydouble/NanoMapper.NET/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageIconUrl>A super-simple object mapping library for .NET</PackageIconUrl>
+    <AssemblyVersion>1.0.*</AssemblyVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard1.5\NanoMapper.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>
