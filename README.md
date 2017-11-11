@@ -71,10 +71,10 @@ This is especially useful when you need to include properties that are currently
 
 The default `ApplyTo(...)` method uses the global mapper instance.
 
-In times when it is necessary to avoid using static constructs, such as during testing or integrating with systems that rely on dependency injection / IoC containers, we can create a new `Mapper` instance and pass that to the `ApplyTo(...)` method instead:
+In times when it is necessary to avoid using static constructs, such as during testing or integrating with systems that rely on dependency injection / IoC containers, we can create a new `IMapper` instance and pass that to the `ApplyTo(...)` method instead:
 
-    // Create a new Mapper instance
-    var mapper = new Mapper();
+    // Create a new IMapper instance
+    var mapper = Mapper.CreateMapper();
 
     // Configure some mappings
     mapper.Configure<SourceType, TargetType>(map => { ... });
