@@ -4,7 +4,7 @@ namespace NanoMapper.Tests {
 
     public class MapperTests {
 
-        [Fact]
+        //[Fact]
         public void TestTheMappingSystem() {
             var key = new MappingConfigurationKey(typeof(SourceClass), typeof(TargetClass));
 
@@ -100,7 +100,24 @@ namespace NanoMapper.Tests {
             Assert.Equal(source.Name, GLOBAL_MAPPING_NAME_VALUE);
             Assert.Equal(target.Name, GLOBAL_MAPPING_NAME_VALUE);
         }
-        
+
+        [Fact]
+        public void DirectMappingTest() {
+            var source = new SourceClass();
+            var target = new TargetClass();
+            
+            Assert.NotEqual(source.Name, target.Name);
+
+            var mapping = new MappingConfiguration<SourceClass, TargetClass>();
+            
+            mapping.Property(t => t.Name, s => s.Name);
+
+            mapping.Execute(source, target);
+            
+            Assert.Equal(source.Name, target.Name);
+        }
+
+
         public class SourceClass {
             public int Id { get; set; } = 12345;
             public string Name { get; set; } = "source test";

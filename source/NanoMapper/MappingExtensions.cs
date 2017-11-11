@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace NanoMapper {
 
@@ -10,34 +7,41 @@ namespace NanoMapper {
     /// Provides object entry point extensions that exposes the ApplyTo(...) mapping application method.
     /// </summary>
     public static class MappingExtensions {
-        
+
         /// <summary>
         /// Applies all applicable property values from the source object onto the target object
         /// </summary>
         public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target)
             where TSource : class where TTarget : class
             => ApplyTo(source, target, Mapper.GlobalInstance);
-        
-        /// <summary>
-        /// Applies all applicable property values from the source object onto the target object
-        /// using the specified mapping overrides.
-        /// </summary>
-        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, Action<IMappingConfiguration<TSource, TTarget>> configure)
-            where TSource : class where TTarget : class
-            => ApplyTo(source, target, Mapper.GlobalInstance, configure);
-        
-        /// <summary>
-        /// Applies all applicable property values from the source object onto the target object
-        /// </summary>
-        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, IMapper mapper) {
 
-        }
-        
         /// <summary>
         /// Applies all applicable property values from the source object onto the target object
         /// using the specified mapping overrides.
         /// </summary>
-        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, IMapper mapper, Action<IMappingConfiguration<TSource, TTarget>> configure) {
+        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, Action<IMappingConfiguration<TSource, TTarget>> configure) where TSource : class where TTarget : class
+            => ApplyTo(source, target, Mapper.GlobalInstance, configure);
+
+        /// <summary>
+        /// Applies all applicable property values from the source object onto the target object
+        /// </summary>
+        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, IMapper mapper) where TSource : class where TTarget : class
+            => ApplyTo(source, target, mapper, null);
+
+        /// <summary>
+        /// Applies all applicable property values from the source object onto the target object
+        /// using the specified mapping overrides.
+        /// </summary>
+        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, IMapper mapper, Action<IMappingConfiguration<TSource, TTarget>> configure)  where TSource : class where TTarget : class {
+
+            var mapping = mapper.Mappings.Values.First() as IMappingConfiguration<TSource, TTarget>; // FIXME
+
+            if (configure != null) {
+                configure(mapping);
+            }
+
+            ExecuteApplication(source, target, mapping);
+
 
             //if (!mapper.Mappings.TryGetValue(new Tuple<Type, Type>(typeof(TSource), typeof(TTarget)), out object mappingConfigEntry)) {
 
@@ -63,16 +67,10 @@ namespace NanoMapper {
             //Copy(source, target, properties, fields);
         }
 
-        //private static void Copy(object source, object target, IEnumerable<PropertyInfo> properties, IEnumerable<FieldInfo> fields) {
-        //    foreach (var property in properties) {
-        //        property.SetValue(target, property.GetValue(source));
-        //    }
-
-        //    foreach (var field in fields) {
-        //        field.SetValue(target, field.GetValue(source));
-        //    }
-        //}
-
+        private static void ExecuteApplication<TSource, TTarget>(this TSource source, TTarget target, IMappingConfiguration<TSource, TTarget> mapping) where TSource : class where TTarget : class {
+            mapping.Execute(source, target);
+        }
+        
     }
 
 }

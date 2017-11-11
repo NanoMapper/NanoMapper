@@ -14,7 +14,7 @@ namespace NanoMapper {
         /// Configures the mappings from source types to target types.
         /// </summary>
         /// <param name="configure">A mapping configuration function</param>
-        void Configure<TSource, TTarget>(Action<IMappingConfiguration<TSource, TTarget>> configure);
+        void Configure<TSource, TTarget>(Action<IMappingConfiguration<TSource, TTarget>> configure) where TSource : class where TTarget : class;
 
         /// <summary>
         /// <para>T: the mapper will access any globally configured mappings when resolving type application.</para>
@@ -44,7 +44,7 @@ namespace NanoMapper {
         /// Configures the mappings from source types to target types against the global mapping cache.
         /// </summary>
         /// <param name="configure">A mapping configuration function</param>
-        public static void Configure<TSource, TTarget>(Action<IMappingConfiguration<TSource, TTarget>> configure) {
+        public static void Configure<TSource, TTarget>(Action<IMappingConfiguration<TSource, TTarget>> configure) where TSource : class where TTarget : class {
             GlobalInstance.Configure(configure);
         }
 
@@ -65,7 +65,7 @@ namespace NanoMapper {
     /// <inheritdoc cref="IMapper" />
     internal class MapperImpl : IMapper {
 
-        public void Configure<TSource, TTarget>(Action<IMappingConfiguration<TSource, TTarget>> configure) {
+        public void Configure<TSource, TTarget>(Action<IMappingConfiguration<TSource, TTarget>> configure) where TSource : class where TTarget : class {
             IMappingConfiguration<TSource, TTarget> mapping = null;
 
             if (EnableGlobalMappings && this != Mapper.GlobalInstance) {
