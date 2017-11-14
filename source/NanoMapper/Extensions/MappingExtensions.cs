@@ -27,16 +27,16 @@ namespace NanoMapper.Extensions {
         /// <summary>
         /// Applies all applicable property values from the source object onto the target object
         /// </summary>
-        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, IMappingContainer mapper) where TSource : class where TTarget : class
-            => ApplyTo(source, target, mapper, null);
+        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, IMappingContainer container) where TSource : class where TTarget : class
+            => ApplyTo(source, target, container, null);
 
         /// <summary>
         /// Applies all applicable property values from the source object onto the target object
         /// using the specified mapping overrides.
         /// </summary>
-        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, IMappingContainer mapper, Action<IMappingConfiguration<TSource, TTarget>> configure)  where TSource : class where TTarget : class {
+        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, IMappingContainer container, Action<IMappingConfiguration<TSource, TTarget>> configure)  where TSource : class where TTarget : class {
 
-            var mapping = mapper.Mappings.Values.First() as IMappingConfiguration<TSource, TTarget>; // FIXME
+            var mapping = container.Mappings.Values.First() as IMappingConfiguration<TSource, TTarget>; // FIXME
 
             if (configure != null) {
                 configure(mapping);
@@ -45,7 +45,7 @@ namespace NanoMapper.Extensions {
             ExecuteApplication(source, target, mapping);
 
 
-            //if (!mapper.Mappings.TryGetValue(new Tuple<Type, Type>(typeof(TSource), typeof(TTarget)), out object mappingConfigEntry)) {
+            //if (!container.Mappings.TryGetValue(new Tuple<Type, Type>(typeof(TSource), typeof(TTarget)), out object mappingConfigEntry)) {
 
             //}
 

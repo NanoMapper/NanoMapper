@@ -12,16 +12,16 @@ namespace NanoMapper.Tests {
         public void TestTheMappingSystem() {
             var key = new MappingConfigurationKey(typeof(SourceClass), typeof(TargetClass));
 
-            var mapper = Mappings.CreateContainer();
+            var container = Mappings.CreateContainer();
             var source = new SourceClass();
             var target = new TargetClass();
 
-            Assert.False(mapper.Mappings.ContainsKey(key));
+            Assert.False(container.Mappings.ContainsKey(key));
 
-            source.ApplyTo(target, mapper);
+            source.ApplyTo(target, container);
 
             // mapping configurations are cached
-            Assert.True(mapper.Mappings.ContainsKey(key));
+            Assert.True(container.Mappings.ContainsKey(key));
 
             // automatic property resolution
             Assert.NotEqual(source.Id.ToString(), target.Id);
@@ -29,11 +29,11 @@ namespace NanoMapper.Tests {
             Assert.Equal(source.Description, target.Description);
             Assert.Equal(source.InternalState, target.InternalState);
 
-            mapper = Mappings.CreateContainer();
+            container = Mappings.CreateContainer();
             source = new SourceClass();
             target = new TargetClass();
 
-            source.ApplyTo(target, mapper, map => {
+            source.ApplyTo(target, container, map => {
                 map.Property(t => t.Id, s => s.Id.ToString());
             });
 
@@ -43,20 +43,20 @@ namespace NanoMapper.Tests {
             // reset just the objects
             source = new SourceClass();
             target = new TargetClass();
-            source.ApplyTo(target, mapper);
+            source.ApplyTo(target, container);
 
             // local overrides are not cached
             Assert.NotEqual(source.Id.ToString(), target.Id);
 
-            mapper = Mappings.CreateContainer();
+            container = Mappings.CreateContainer();
             source = new SourceClass();
             target = new TargetClass();
 
-            mapper.Configure<SourceClass, TargetClass>(map => {
+            container.Configure<SourceClass, TargetClass>(map => {
                 map.Ignore(t => t.Name);
             });
 
-            source.ApplyTo(target, mapper);
+            source.ApplyTo(target, container);
 
             // ignored properties are not mapped
             Assert.NotEqual(source.Name, target.Name);
@@ -65,7 +65,7 @@ namespace NanoMapper.Tests {
             source = new SourceClass();
             target = new TargetClass();
 
-            source.ApplyTo(target, mapper, map => {
+            source.ApplyTo(target, container, map => {
                 map.Property(t => t.Name);
             });
 
@@ -73,7 +73,7 @@ namespace NanoMapper.Tests {
             Assert.Equal(source.Name, target.Name);
             Assert.Equal(source.Description, target.Description);
 
-            mapper = Mappings.CreateContainer();
+            container = Mappings.CreateContainer();
             source = new SourceClass();
             target = new TargetClass();
             
@@ -83,7 +83,7 @@ namespace NanoMapper.Tests {
                 map.Property(t => t.Name, s => "GLOBAL MAPPING VALUE");
             });
 
-            source.ApplyTo(target, mapper);
+            source.ApplyTo(target, container);
 
             const string GLOBAL_MAPPING_NAME_VALUE = "GLOBAL MAPPING VALUE";
 
@@ -92,13 +92,13 @@ namespace NanoMapper.Tests {
             Assert.NotEqual(target.Name, GLOBAL_MAPPING_NAME_VALUE);
             Assert.Equal(source.Name, target.Name);
 
-            mapper = Mappings.CreateContainer();
+            container = Mappings.CreateContainer();
             source = new SourceClass();
             target = new TargetClass();
 
-            mapper.EnableGlobalMappings = true;
+            container.EnableGlobalMappings = true;
 
-            source.ApplyTo(target, mapper);
+            source.ApplyTo(target, container);
 
             // global cache was enabled
             Assert.Equal(source.Name, GLOBAL_MAPPING_NAME_VALUE);
@@ -142,9 +142,9 @@ namespace NanoMapper.Tests {
         [Fact]
         public void MappingReadOnlyTargetPropertyThrowsException() {
             Assert.Throws<ReadOnlyPropertyException>(() => {
-                var mapper = Mappings.CreateContainer();
+                var container = Mappings.CreateContainer();
 
-                mapper.Configure<SourceClass, ReadOnlyClass>(map => {
+                container.Configure<SourceClass, ReadOnlyClass>(map => {
                     map.Property(t => t.ReadOnlyProperty);
                 });
             });

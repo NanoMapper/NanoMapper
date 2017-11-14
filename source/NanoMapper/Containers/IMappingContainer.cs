@@ -16,8 +16,8 @@ namespace NanoMapper.Containers {
         void Configure<TSource, TTarget>(Action<IMappingConfiguration<TSource, TTarget>> configure) where TSource : class where TTarget : class;
 
         /// <summary>
-        /// <para>T: the mapper will access any globally configured mappings when resolving type application.</para>
-        /// <para>F: the mapper will NOT access any globally configured mappings when resolving type application.</para>
+        /// <para>T: the container will access any globally configured mappings when resolving type application.</para>
+        /// <para>F: the container will NOT access any globally configured mappings when resolving type application.</para>
         /// </summary>
         bool EnableGlobalMappings { get; set; }
 

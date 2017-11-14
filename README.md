@@ -25,10 +25,10 @@ is cached so future applications execute super-fast.
 Because of this, it is recommended that most mappings be pre-configured once during
 the application's startup process.
 
-This can be done using the global `Mapper.Configure(...)` method, which takes in a mapping configuration function that defines the property mappings between the source and target types.
+This can be done using the global `Mappings.Configure(...)` method, which takes in a mapping configuration function that defines the property mappings between the source and target types.
 
     // Configure the mapping between SourceType and TargetType objects
-    Mapper.Configure<SourceType, TargetType>(map => {
+    Mappings.Configure<SourceType, TargetType>(map => {
       map.Property(...);
       ...
     });
@@ -69,37 +69,33 @@ This is especially useful when you need to include properties that are currently
 
 ## Testing / DI compatibility
 
-The default `ApplyTo(...)` method uses the global mapper instance.
+The default `ApplyTo(...)` method uses the global container instance.
 
 In times when it is necessary to avoid using static constructs, such as during testing or integrating with systems that rely on dependency injection / IoC containers, we can create a new `IMapper` instance and pass that to the `ApplyTo(...)` method instead:
 
-    // Create a new IMapper instance
-    var mapper = Mapper.CreateMapper();
+    // Create a new container instance
+    var container = Mappings.CreateContainer();
 
     // Configure some mappings
-    mapper.Configure<SourceType, TargetType>(map => { ... });
+    container.Configure<SourceType, TargetType>(map => { ... });
 
-    // Use the mapper
-    source.ApplyTo(target, mapper);
+    // Use the container
+    source.ApplyTo(target, container);
 
-Instance mappers do not access the global cache by default.
-In order to utilise any globally defined mappings we need to set the mapper's
+Instance containers do not access the global cache by default.
+In order to utilise any globally defined mappings we need to set the container's
 `EnableGlobalMappings` property to `true`.
 
-In doing so the mapper will check the global cache for existing mapping configurations and apply them first before any instance or overriding mappings.
+In doing so the container will check the global cache for existing mapping configurations and apply them first before any instance or overriding mappings.
 
-    // Create a new Mapper instance
-    var mapper = new Mapper {
-
-      // Allow the Mapper to call into the global cache   
-      EnableGlobalMappings = true
-    };
+    // Create a new container instance
+    var container = Mappings.CreateContainer(enableGlobalMappings: true);
 
     // Configure some mappings
-    mapper.Configure<SourceType, TargetType>(map => { ... });
+    container.Configure<SourceType, TargetType>(map => { ... });
 
-    // Use the mapper
-    source.ApplyTo(target, mapper);
+    // Use the container
+    source.ApplyTo(target, container);
 
 <hr />
 

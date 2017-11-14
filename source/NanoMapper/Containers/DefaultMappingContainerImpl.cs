@@ -17,13 +17,13 @@ namespace NanoMapper.Containers {
 
             //if (EnableGlobalMappings && this != NanoMapper.Mappings.GlobalContainer) {
 
-            //    // try to locate the mapping from the global mapper
+            //    // try to locate the mapping from the global container
             //    if (NanoMapper.Mappings.GlobalContainer.Mappings.TryGetValue(key, out var globalMappingEntry)) {
             //        globalMapping = (IMappingConfiguration<TSource, TTarget>)globalMappingEntry;
             //    }
             //}
 
-            //// try to locate the mapping from the local mapper
+            //// try to locate the mapping from the local container
             //if (NanoMapper.Mappings.GlobalContainer.Mappings.TryGetValue(key, out var mapping)) {
             //    globalMapping;
             //}

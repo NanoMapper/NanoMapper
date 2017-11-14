@@ -13,8 +13,10 @@ namespace NanoMapper.Containers {
         /// Creates a new instance of a mapping container
         /// </summary>
         /// <remarks>For use in unit testing and DI / IoC based scenarios.</remarks>
-        public static IMappingContainer CreateContainer() {
-            return new DefaultMappingContainerImpl();
+        public static IMappingContainer CreateContainer(bool enableGlobalMappings = false) {
+            return new DefaultMappingContainerImpl() {
+                EnableGlobalMappings = enableGlobalMappings
+            };
         }
 
         /// <summary>
@@ -26,7 +28,7 @@ namespace NanoMapper.Containers {
         }
 
         /// <summary>
-        /// Singleton global mapper instance
+        /// Singleton global container instance
         /// </summary>
         internal static IMappingContainer GlobalContainer => _staticMapper.Value;
 
