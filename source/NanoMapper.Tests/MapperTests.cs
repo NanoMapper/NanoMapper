@@ -104,7 +104,7 @@ namespace NanoMapper.Tests {
             Assert.Equal(source.Name, GLOBAL_MAPPING_NAME_VALUE);
             Assert.Equal(target.Name, GLOBAL_MAPPING_NAME_VALUE);
         }
-
+        
         [Fact]
         public void DirectMappingTest() {
             var source = new SourceClass();
@@ -118,6 +118,24 @@ namespace NanoMapper.Tests {
 
             mapping.Execute(source, target);
             
+            Assert.Equal(source.Name, target.Name);
+        }
+
+        [Fact]
+        public void DirectMappingTest2() {
+            var source = new SourceClass();
+            var target = new TargetClass();
+            
+            Assert.NotEqual(source.Name, target.Name);
+
+            var container = Mappings.CreateContainer();
+
+            container.Configure<SourceClass, TargetClass>(map => {
+                map.Property(t => t.Name, s => s.Name);
+            });
+
+            source.ApplyTo(target, container);
+
             Assert.Equal(source.Name, target.Name);
         }
 
