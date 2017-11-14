@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using NanoMapper.Configurations;
+using NanoMapper.Containers;
 
-namespace NanoMapper {
+namespace NanoMapper.Extensions {
 
     /// <summary>
     /// Provides object entry point extensions that exposes the ApplyTo(...) mapping application method.
@@ -13,26 +15,26 @@ namespace NanoMapper {
         /// </summary>
         public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target)
             where TSource : class where TTarget : class
-            => ApplyTo(source, target, Mapper.GlobalInstance);
+            => ApplyTo(source, target, Mappings.GlobalContainer);
 
         /// <summary>
         /// Applies all applicable property values from the source object onto the target object
         /// using the specified mapping overrides.
         /// </summary>
         public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, Action<IMappingConfiguration<TSource, TTarget>> configure) where TSource : class where TTarget : class
-            => ApplyTo(source, target, Mapper.GlobalInstance, configure);
+            => ApplyTo(source, target, Mappings.GlobalContainer, configure);
 
         /// <summary>
         /// Applies all applicable property values from the source object onto the target object
         /// </summary>
-        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, IMapper mapper) where TSource : class where TTarget : class
+        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, IMappingContainer mapper) where TSource : class where TTarget : class
             => ApplyTo(source, target, mapper, null);
 
         /// <summary>
         /// Applies all applicable property values from the source object onto the target object
         /// using the specified mapping overrides.
         /// </summary>
-        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, IMapper mapper, Action<IMappingConfiguration<TSource, TTarget>> configure)  where TSource : class where TTarget : class {
+        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, IMappingContainer mapper, Action<IMappingConfiguration<TSource, TTarget>> configure)  where TSource : class where TTarget : class {
 
             var mapping = mapper.Mappings.Values.First() as IMappingConfiguration<TSource, TTarget>; // FIXME
 

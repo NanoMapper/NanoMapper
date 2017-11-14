@@ -1,14 +1,18 @@
+using NanoMapper.Configurations;
+using NanoMapper.Containers;
+using NanoMapper.Exceptions;
+using NanoMapper.Extensions;
 using Xunit;
 
 namespace NanoMapper.Tests {
 
     public class MapperTests {
 
-        //[Fact]
+        [Fact]
         public void TestTheMappingSystem() {
             var key = new MappingConfigurationKey(typeof(SourceClass), typeof(TargetClass));
 
-            var mapper = Mapper.CreateMapper();
+            var mapper = Mappings.CreateContainer();
             var source = new SourceClass();
             var target = new TargetClass();
 
@@ -25,7 +29,7 @@ namespace NanoMapper.Tests {
             Assert.Equal(source.Description, target.Description);
             Assert.Equal(source.InternalState, target.InternalState);
 
-            mapper = Mapper.CreateMapper();
+            mapper = Mappings.CreateContainer();
             source = new SourceClass();
             target = new TargetClass();
 
@@ -44,7 +48,7 @@ namespace NanoMapper.Tests {
             // local overrides are not cached
             Assert.NotEqual(source.Id.ToString(), target.Id);
 
-            mapper = Mapper.CreateMapper();
+            mapper = Mappings.CreateContainer();
             source = new SourceClass();
             target = new TargetClass();
 
@@ -69,13 +73,13 @@ namespace NanoMapper.Tests {
             Assert.Equal(source.Name, target.Name);
             Assert.Equal(source.Description, target.Description);
 
-            mapper = Mapper.CreateMapper();
+            mapper = Mappings.CreateContainer();
             source = new SourceClass();
             target = new TargetClass();
             
-            Assert.False(Mapper.GlobalInstance.Mappings.ContainsKey(key));
+            Assert.False(Mappings.GlobalContainer.Mappings.ContainsKey(key));
 
-            Mapper.Configure<SourceClass, TargetClass>(map => {
+            Mappings.Configure<SourceClass, TargetClass>(map => {
                 map.Property(t => t.Name, s => "GLOBAL MAPPING VALUE");
             });
 
@@ -88,7 +92,7 @@ namespace NanoMapper.Tests {
             Assert.NotEqual(target.Name, GLOBAL_MAPPING_NAME_VALUE);
             Assert.Equal(source.Name, target.Name);
 
-            mapper = Mapper.CreateMapper();
+            mapper = Mappings.CreateContainer();
             source = new SourceClass();
             target = new TargetClass();
 
@@ -117,6 +121,16 @@ namespace NanoMapper.Tests {
             Assert.Equal(source.Name, target.Name);
         }
 
+        [Fact]
+        public void MappingReadOnlyTargetPropertyThrowsException() {
+            Assert.Throws<ReadOnlyPropertyException>(() => {
+                var mapper = Mappings.CreateContainer();
+
+                mapper.Configure<SourceClass, ReadOnlyClass>(map => {
+                    map.Property(t => t.ReadOnlyProperty);
+                });
+            });
+        }
 
         public class SourceClass {
             public int Id { get; set; } = 12345;
@@ -131,6 +145,10 @@ namespace NanoMapper.Tests {
             public string Description { get; set; } = "This is a target test";
             internal int InternalState { get; set; } = 111;
             private int PrivateState { get; set; } = 456;
+        }
+
+        public class ReadOnlyClass {
+            public int ReadOnlyProperty => 123;
         }
     }
 

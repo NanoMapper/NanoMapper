@@ -2,32 +2,35 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+using NanoMapper.Exceptions;
 
-namespace NanoMapper {
+namespace NanoMapper.Configurations {
+
+    public interface IMappingConfiguration { }
 
     /// <summary>
     /// Represents a mapping configuration object that is used to configure object property mappings.
     /// </summary>
-    public interface IMappingConfiguration<TSource, TTarget> where TSource : class where TTarget : class {
+    public interface IMappingConfiguration<TSource, TTarget> : IMappingConfiguration where TSource : class where TTarget : class {
 
         /// <summary>
         /// Maps the given property from source to target where
         /// both source and target contain compatible property
         /// applications.
         /// </summary>
-        IMappingConfiguration<TSource, TTarget> Property<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) where TResult : class;
+        IMappingConfiguration<TSource, TTarget> Property<TResult>(Expression<Func<TTarget, TResult>> propertyExpression);
 
         /// <summary>
         /// Maps the given property from source to target
         /// using the specified @translationFunc to perform
         /// mapping.
         /// </summary>
-        IMappingConfiguration<TSource, TTarget> Property<TResult>(Expression<Func<TTarget, TResult>> propertyExpression, Func<TSource, TResult> translationFunc) where TResult : class;
+        IMappingConfiguration<TSource, TTarget> Property<TResult>(Expression<Func<TTarget, TResult>> propertyExpression, Func<TSource, TResult> translationFunc);
 
         /// <summary>
         /// Specifies that this property should be ignored.
         /// </summary>
-        IMappingConfiguration<TSource, TTarget> Ignore<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) where TResult : class;
+        IMappingConfiguration<TSource, TTarget> Ignore<TResult>(Expression<Func<TTarget, TResult>> propertyExpression);
 
         /// <summary>
         /// Executes the mapping application based on the current mapping configuration.
@@ -39,30 +42,23 @@ namespace NanoMapper {
     /// <inheritdoc cref="IMappingConfiguration{TSource,TTarget}" />
     public class MappingConfiguration<TSource, TTarget> : IMappingConfiguration<TSource, TTarget> where TSource : class where TTarget : class {
 
-        public IMappingConfiguration<TSource, TTarget> Property<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) where TResult : class {
+        public IMappingConfiguration<TSource, TTarget> Property<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) {
             var propertyInfo = ExtractPropertyInfoFromPropertyExpression(propertyExpression);
-
-            TResult translate(TSource source) => (TResult)propertyInfo.GetValue(source);
-
-            PropertyMappings[propertyInfo] = (Func<TSource, TResult>)translate;
+            
+            ValidateAndRegisterMapping(propertyInfo, (TSource source) => (TResult)propertyInfo.GetValue(source));
 
             return this;
         }
 
-        public IMappingConfiguration<TSource, TTarget> Property<TResult>(Expression<Func<TTarget, TResult>> propertyExpression, Func<TSource, TResult> translationFunc) where TResult : class {
+        public IMappingConfiguration<TSource, TTarget> Property<TResult>(Expression<Func<TTarget, TResult>> propertyExpression, Func<TSource, TResult> translationFunc) {
             var propertyInfo = ExtractPropertyInfoFromPropertyExpression(propertyExpression);
 
-            if (PropertyMappings.ContainsKey(propertyInfo)) {
-                PropertyMappings[propertyInfo] = translationFunc;
-            }
-            else {
-                PropertyMappings.Add(propertyInfo, translationFunc);
-            }
+            ValidateAndRegisterMapping(propertyInfo, translationFunc);
 
             return this;
         }
 
-        public IMappingConfiguration<TSource, TTarget> Ignore<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) where TResult : class {
+        public IMappingConfiguration<TSource, TTarget> Ignore<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) {
             var propertyInfo = ExtractPropertyInfoFromPropertyExpression(propertyExpression);
 
             PropertyMappings.Remove(propertyInfo);
@@ -84,6 +80,19 @@ namespace NanoMapper {
             }
             
             throw new InvalidOperationException("Property expression must be a valid property reference");
+        }
+
+        private void ValidateAndRegisterMapping<TResult>(PropertyInfo propertyInfo, Func<TSource, TResult> translationFunc) {
+            if (!propertyInfo.CanWrite) {
+                throw new ReadOnlyPropertyException(propertyInfo);
+            }
+
+            if (PropertyMappings.ContainsKey(propertyInfo)) {
+                PropertyMappings[propertyInfo] = translationFunc;
+            }
+            else {
+                PropertyMappings.Add(propertyInfo, translationFunc);
+            }
         }
 
         private readonly IDictionary<PropertyInfo, object> PropertyMappings = new Dictionary<PropertyInfo, object>();
