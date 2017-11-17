@@ -22,7 +22,7 @@ namespace NanoMapper.Core {
         /// Configures the mappings from source types to target types against the global mapping cache.
         /// </summary>
         /// <param name="configure">A mapping configuration function</param>
-        public static void Configure<TSource, TTarget>(Action<IMapping<TSource, TTarget>> configure) where TSource : class where TTarget : class {
+        public static void Configure<TSource, TTarget>(Action<Mapping<TSource, TTarget>> configure) where TSource : class where TTarget : class {
             GlobalContainer.Configure(configure);
         }
 

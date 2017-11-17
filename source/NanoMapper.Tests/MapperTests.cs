@@ -1,3 +1,4 @@
+using System.Globalization;
 using NanoMapper.Core;
 using NanoMapper.Exceptions;
 using NanoMapper.Extensions;
@@ -138,27 +139,29 @@ namespace NanoMapper.Tests {
             Assert.Equal(source.SourceDescription, target.TargetDescription);
         }
 
-        //[Fact]
-        //public void SimpleMappingTest() {
-        //    var source = new SourceClass();
-        //    var target = new TargetClass();
+        [Fact]
+        public void ConfiguredContainerWithAdditionalsTest() {
+            var source = new SourceClass();
+            var target = new TargetClass();
 
-        //    Assert.NotEqual(source.Name, target.Name);
-        //    Assert.NotEqual(source.Description, target.Description);
+            Assert.NotEqual(source.Id.ToString(CultureInfo.InvariantCulture), target.Id);
+            Assert.NotEqual(source.Name, target.Name);
+            Assert.NotEqual(source.SourceDescription, target.TargetDescription);
 
-        //    var container = Mappings.CreateContainer();
+            var container = Mappings.CreateContainer();
 
-        //    container.Configure<SourceClass, TargetClass>(map => {
-        //        map.Property(t => t.Name, s => s.Name);
-        //    });
+            container.Configure<SourceClass, TargetClass>(map => {
+                map.Property(t => t.Id, s => s.Id.ToString(CultureInfo.InvariantCulture));
+            });
 
-        //    source.ApplyTo(target, container, map => {
-        //        map.Property(t => t.Description, s => s.Description);
-        //    });
-
-        //    Assert.Equal(source.Name, target.Name);
-        //    Assert.Equal(source.Description, target.Description);
-        //}
+            source.ApplyTo(target, container, map => {
+                map.Property(t => t.TargetDescription, s => s.SourceDescription);
+            });
+            
+            Assert.Equal(source.Id.ToString(CultureInfo.InvariantCulture), target.Id);
+            Assert.Equal(source.Name, target.Name);
+            Assert.Equal(source.SourceDescription, target.TargetDescription);
+        }
 
         [Fact]
         public void MappingReadOnlyTargetPropertyThrowsException() {

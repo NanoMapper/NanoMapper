@@ -21,7 +21,11 @@ namespace NanoMapper.Core {
         protected internal static readonly IEqualityComparer<PropertyInfo> PropertyComparer = new ComparePropertyByNameAndType();
     }
 
-    public class Mapping<TSource, TTarget> : Mapping, IMapping<TSource, TTarget> {
+    
+    /// <summary>
+    /// Represents transform mappings for source to target application.
+    /// </summary>
+    public class Mapping<TSource, TTarget> : Mapping {
 
         public Mapping() {
             var sourceProps = SourceTypeInfo.GetProperties().Where(p => p.CanRead).ToList();
@@ -37,8 +41,16 @@ namespace NanoMapper.Core {
             }
         }
 
-
-        public IMapping<TSource, TTarget> Property<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) {
+        internal Mapping(Mapping<TSource, TTarget> other) {
+            _bindings = new Dictionary<PropertyInfo, Delegate>(other._bindings);
+        }
+        
+        /// <summary>
+        /// Maps the given property from source to target where
+        /// both source and target contain compatible property
+        /// applications.
+        /// </summary>
+        public Mapping<TSource, TTarget> Property<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) {
             var propertyInfo = ExtractPropertyInfoFromPropertyExpression(propertyExpression);
 
             RegisterBinding(propertyInfo, (TSource source) => (TResult)propertyInfo.GetValue(source));
@@ -46,7 +58,12 @@ namespace NanoMapper.Core {
             return this;
         }
         
-        public IMapping<TSource, TTarget> Property<TResult>(Expression<Func<TTarget, TResult>> propertyExpression, Func<TSource, TResult> translationFunc) {            
+        /// <summary>
+        /// Maps the given property from source to target
+        /// using the specified @translationFunc to perform
+        /// mapping.
+        /// </summary>
+        public Mapping<TSource, TTarget> Property<TResult>(Expression<Func<TTarget, TResult>> propertyExpression, Func<TSource, TResult> translationFunc) {            
             var propertyInfo = ExtractPropertyInfoFromPropertyExpression(propertyExpression);
 
             RegisterBinding(propertyInfo, translationFunc);
@@ -54,20 +71,25 @@ namespace NanoMapper.Core {
             return this;
         }
         
-        public IMapping<TSource, TTarget> Ignore<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) {
+        /// <summary>
+        /// Specifies that this property should be ignored.
+        /// </summary>
+        public Mapping<TSource, TTarget> Ignore<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) {
             var propertyInfo = ExtractPropertyInfoFromPropertyExpression(propertyExpression);
 
             _bindings.Remove(propertyInfo);
 
             return this;
         }
+        
+        /// <summary>
+        /// Applies the configured mappings from the source object onto the target object.
+        /// </summary>
         public void Apply(TSource source, TTarget target) {
             foreach (var binding in this._bindings) {
                 binding.Key.SetValue(target, ((Func<TSource, object>)binding.Value).Invoke(source));
             }
         }
-
-
         
         private PropertyInfo ExtractPropertyInfoFromPropertyExpression<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) {
             if (propertyExpression.Body.NodeType == ExpressionType.MemberAccess) {
@@ -95,4 +117,5 @@ namespace NanoMapper.Core {
         private static readonly TypeInfo SourceTypeInfo = typeof(TSource).GetTypeInfo();
         private static readonly TypeInfo TargetTypeInfo = typeof(TTarget).GetTypeInfo();
     }
+
 }

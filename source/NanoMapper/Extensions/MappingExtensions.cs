@@ -18,7 +18,7 @@ namespace NanoMapper.Extensions {
         /// Applies all applicable property values from the source object onto the target object
         /// using the specified mapping overrides.
         /// </summary>
-        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, Action<IMapping<TSource, TTarget>> configure)
+        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, Action<Mapping<TSource, TTarget>> configure)
             where TSource : class where TTarget : class => ApplyTo(source, target, Mappings.GlobalContainer, configure);
 
         /// <summary>
@@ -31,14 +31,12 @@ namespace NanoMapper.Extensions {
         /// Applies all applicable property values from the source object onto the target object
         /// using the specified mapping overrides.
         /// </summary>
-        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, IMappingContainer container, Action<IMapping<TSource, TTarget>> configure)
+        public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, IMappingContainer container, Action<Mapping<TSource, TTarget>> configure)
             where TSource : class where TTarget : class {
 
-            var mapping = container.GetMappingFor<TSource, TTarget>();
-
-            if (configure != null) {
-                configure(mapping);
-            }
+            var mapping = container.GenerateMappingFor<TSource, TTarget>();
+            
+            configure?.Invoke(mapping);
 
             mapping.Apply(source, target);
         }

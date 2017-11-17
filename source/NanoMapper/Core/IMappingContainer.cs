@@ -11,12 +11,12 @@ namespace NanoMapper.Core {
         /// Configures the mappings from source types to target types.
         /// </summary>
         /// <param name="configure">A mapping configuration function</param>
-        void Configure<TSource, TTarget>(Action<IMapping<TSource, TTarget>> configure) where TSource : class where TTarget : class;
+        void Configure<TSource, TTarget>(Action<Mapping<TSource, TTarget>> configure) where TSource : class where TTarget : class;
 
         /// <summary>
-        /// Gets the mapping for the source to target transforms.
+        /// Generates the mapping for the source to target transforms.
         /// </summary>
-        IMapping<TSource, TTarget> GetMappingFor<TSource, TTarget>();
+        Mapping<TSource, TTarget> GenerateMappingFor<TSource, TTarget>();
     }
 
 }
