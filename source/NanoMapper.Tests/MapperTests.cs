@@ -1,4 +1,5 @@
 using NanoMapper.Core;
+using NanoMapper.Exceptions;
 using NanoMapper.Extensions;
 using Xunit;
 
@@ -102,7 +103,7 @@ namespace NanoMapper.Tests {
         //    Assert.Equal(source.Name, GLOBAL_MAPPING_NAME_VALUE);
         //    Assert.Equal(target.Name, GLOBAL_MAPPING_NAME_VALUE);
         //}
-
+        
         [Fact]
         public void DefaultMappingsTest() {
             var source = new SourceClass();
@@ -119,6 +120,24 @@ namespace NanoMapper.Tests {
             Assert.NotEqual(source.SourceDescription, target.TargetDescription);
         }
         
+        [Fact]
+        public void DefaultMappingsWithAdditionalsTest() {
+            var source = new SourceClass();
+            var target = new TargetClass();
+
+            Assert.NotEqual(source.Name, target.Name);
+            Assert.NotEqual(source.SourceDescription, target.TargetDescription);
+
+            var container = Mappings.CreateContainer();
+
+            source.ApplyTo(target, container, map => {
+                map.Property(t => t.TargetDescription, s => s.SourceDescription);
+            });
+
+            Assert.Equal(source.Name, target.Name);
+            Assert.Equal(source.SourceDescription, target.TargetDescription);
+        }
+
         //[Fact]
         //public void SimpleMappingTest() {
         //    var source = new SourceClass();
@@ -141,18 +160,19 @@ namespace NanoMapper.Tests {
         //    Assert.Equal(source.Description, target.Description);
         //}
 
-        //[Fact]
-        //public void MappingReadOnlyTargetPropertyThrowsException() {
-        //    Assert.Throws<ReadOnlyPropertyException>(() => {
-        //        var container = Mappings.CreateContainer();
+        [Fact]
+        public void MappingReadOnlyTargetPropertyThrowsException() {
+            Assert.Throws<ReadOnlyPropertyException>(() => {
+                var source = new SourceClass();
+                var target = new ReadOnlyClass();
+                
+                var container = Mappings.CreateContainer();
 
-        //        container.Configure<SourceClass, ReadOnlyClass>(map => {
-        //            map.Property(t => t.ReadOnlyProperty);
-        //        });
-        //    });
-        //}
-
-
+                source.ApplyTo(target, container, map => {
+                    map.Property(t => t.ReadOnlyProperty, s => s.Id);
+                });
+            });
+        }
 
         public class SourceClass {
             public int Id { get; set; } = 12345;
