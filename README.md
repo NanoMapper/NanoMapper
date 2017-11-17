@@ -71,7 +71,7 @@ This is especially useful when you need to include properties that are currently
 
 The default `ApplyTo(...)` method uses the global container instance.
 
-In times when it is necessary to avoid using static constructs, such as during testing or integrating with systems that rely on dependency injection / IoC containers, we can create a new `IMapper` instance and pass that to the `ApplyTo(...)` method instead:
+In times when it is necessary to avoid using static constructs, such as during testing or integrating with systems that rely on dependency injection / IoC containers, we can create a new `IMappingContainer` instance and pass that to the `ApplyTo(...)` method instead:
 
     // Create a new container instance
     var container = Mappings.CreateContainer();
@@ -82,9 +82,9 @@ In times when it is necessary to avoid using static constructs, such as during t
     // Use the container
     source.ApplyTo(target, container);
 
-Instance containers do not access the global cache by default.
-In order to utilise any globally defined mappings we need to set the container's
-`EnableGlobalMappings` property to `true`.
+Instance containers do not access the global mappings by default.
+In order to utilise any globally defined mappings we need to pass the 
+`enableGlobalMappings` argument as `true`.
 
 In doing so the container will check the global cache for existing mapping configurations and apply them first before any instance or overriding mappings.
 
@@ -97,6 +97,14 @@ In doing so the container will check the global cache for existing mapping confi
     // Use the container
     source.ApplyTo(target, container);
 
+Alternatively, a custom `IMappingContainer` implementation can be implemented to suit any specific needs.
+
+    // Define a new container
+    class CustomMappingContainer : IMappingContainer { }
+
+    // Use the container
+    source.ApplyTo(target, new CustomMappingContainer(...));
+    
 <hr />
 
 *NanoMapper.NET is free, open-source software.* ([MIT](https://raw.githubusercontent.com/garydouble/NanoMapper.NET/master/LICENSE))

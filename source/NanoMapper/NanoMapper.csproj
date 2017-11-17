@@ -23,4 +23,10 @@
     <DocumentationFile>bin\Debug\netstandard1.5\NanoMapper.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Configurations\**" />
+    <EmbeddedResource Remove="Configurations\**" />
+    <None Remove="Configurations\**" />
+  </ItemGroup>
+
 </Project>
