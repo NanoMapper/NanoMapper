@@ -1,5 +1,6 @@
 ﻿using NanoMapper.Comparers;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -21,30 +22,45 @@ namespace NanoMapper.Core {
         protected internal static readonly IEqualityComparer<PropertyInfo> PropertyComparer = new ComparePropertyByNameAndType();
     }
 
-    
+
     /// <summary>
     /// Represents transform mappings for source to target application.
     /// </summary>
     public class Mapping<TSource, TTarget> : Mapping {
 
-        public Mapping() {
-            var sourceProps = SourceTypeInfo.GetProperties(BindingFlags).Where(p => p.CanRead).ToList();
-            var targetProps = TargetTypeInfo.GetProperties(BindingFlags).Where(p => p.CanWrite).ToList();
-            
-            foreach (var targetProperty in targetProps) {
-                var sourceProperty = sourceProps.FirstOrDefault(s => PropertyComparer.Equals(s, targetProperty));
+        /// <summary>
+        /// Configures a new Mapping
+        /// </summary>
+        public Mapping(bool autoDiscoverProperties) {
+            if (autoDiscoverProperties) {
+                var sourceProps = SourceTypeInfo.GetProperties(BindingFlags).Where(p => p.CanRead).ToList();
+                var targetProps = TargetTypeInfo.GetProperties(BindingFlags).Where(p => p.CanWrite).ToList();
 
-                if (sourceProperty != null) {
-                    sourceProps.Remove(sourceProperty);
-                    _bindings.Add(targetProperty, (Func<TSource, object>)((TSource s) => sourceProperty.GetValue(s)));
+                foreach (var targetProperty in targetProps) {
+                    var sourceProperty = sourceProps.FirstOrDefault(s => PropertyComparer.Equals(s, targetProperty));
+
+                    if (sourceProperty != null) {
+                        sourceProps.Remove(sourceProperty);
+                        _bindings.TryAdd(targetProperty, (Func<TSource, object>)((TSource s) => sourceProperty.GetValue(s)));
+                    }
                 }
             }
         }
 
-        internal Mapping(Mapping<TSource, TTarget> other) {
-            _bindings = new Dictionary<PropertyInfo, Delegate>(other._bindings);
+        /// <summary>
+        /// Creates a copy of an existing Mapping
+        /// </summary>
+        internal Mapping(params Mapping<TSource, TTarget>[] others) {
+            _bindings = new ConcurrentDictionary<PropertyInfo, Delegate>();
+
+            foreach (var mapping in others.Where(m => m != null)) {
+                foreach (var binding in mapping._bindings) {
+                    _bindings.AddOrUpdate(binding.Key, binding.Value, (x,y) => binding.Value);
+                }
+            }
+
         }
-        
+
         /// <summary>
         /// Maps the given property from source to target where
         /// both source and target contain compatible property
@@ -63,31 +79,31 @@ namespace NanoMapper.Core {
 
             return this;
         }
-        
+
         /// <summary>
         /// Maps the given property from source to target
         /// using the specified @translationFunc to perform
         /// mapping.
         /// </summary>
-        public Mapping<TSource, TTarget> Property<TResult>(Expression<Func<TTarget, TResult>> propertyExpression, Func<TSource, TResult> translationFunc) {            
+        public Mapping<TSource, TTarget> Property<TResult>(Expression<Func<TTarget, TResult>> propertyExpression, Func<TSource, TResult> translationFunc) {
             var propertyInfo = ExtractPropertyInfoFromPropertyExpression(propertyExpression);
 
             RegisterBinding(propertyInfo, translationFunc);
 
             return this;
         }
-        
+
         /// <summary>
         /// Specifies that this property should be ignored.
         /// </summary>
         public Mapping<TSource, TTarget> Ignore<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) {
             var propertyInfo = ExtractPropertyInfoFromPropertyExpression(propertyExpression);
 
-            _bindings.Remove(propertyInfo);
+            _bindings.TryRemove(propertyInfo, out var unused);
 
             return this;
         }
-        
+
         /// <summary>
         /// Applies the configured mappings from the source object onto the target object.
         /// </summary>
@@ -96,7 +112,7 @@ namespace NanoMapper.Core {
                 binding.Key.SetValue(target, ((Func<TSource, object>)binding.Value).Invoke(source));
             }
         }
-        
+
         private PropertyInfo ExtractPropertyInfoFromPropertyExpression<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) {
             if (propertyExpression.Body.NodeType == ExpressionType.MemberAccess) {
                 return (PropertyInfo)((MemberExpression)propertyExpression.Body).Member;
@@ -109,22 +125,17 @@ namespace NanoMapper.Core {
             if (!propertyInfo.CanWrite) {
                 throw new ReadOnlyPropertyException(propertyInfo);
             }
-            
-            if (_bindings.ContainsKey(propertyInfo)) {
-                _bindings[propertyInfo] = binding;
-            }
-            else {
-                _bindings.Add(propertyInfo, binding);
-            }
+
+            _bindings.AddOrUpdate(propertyInfo, binding, (x, y) => binding);
         }
-        
-        private readonly Dictionary<PropertyInfo, Delegate> _bindings = new Dictionary<PropertyInfo, Delegate>();
-        
+
+        private readonly ConcurrentDictionary<PropertyInfo, Delegate> _bindings = new ConcurrentDictionary<PropertyInfo, Delegate>();
+
         private static readonly TypeInfo SourceTypeInfo = typeof(TSource).GetTypeInfo();
         private static readonly TypeInfo TargetTypeInfo = typeof(TTarget).GetTypeInfo();
 
         private static readonly BindingFlags BindingFlags =
-            BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.FlattenHierarchy|BindingFlags.Instance;
+            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy | BindingFlags.Instance;
     }
 
 }

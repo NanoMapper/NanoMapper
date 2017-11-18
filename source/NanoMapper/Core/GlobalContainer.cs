@@ -11,19 +11,16 @@ namespace NanoMapper.Core {
         /// <summary>
         /// Creates a new instance of a mapping container
         /// </summary>
-        /// <remarks>For use in unit testing and DI / IoC based scenarios.</remarks>
         public static IMappingContainer CreateContainer(bool enableGlobalMappings = false) {
-            return new MappingContainer() {
-
-            };
+            return new MappingContainer(enableGlobalMappings ? GlobalContainer : null);
         }
 
         /// <summary>
         /// Configures the mappings from source types to target types against the global mapping cache.
         /// </summary>
         /// <param name="configure">A mapping configuration function</param>
-        public static void Configure<TSource, TTarget>(Action<Mapping<TSource, TTarget>> configure) where TSource : class where TTarget : class {
-            GlobalContainer.Configure(configure);
+        public static IMappingContainer Configure<TSource, TTarget>(Action<Mapping<TSource, TTarget>> configure) where TSource : class where TTarget : class {
+            return GlobalContainer.Configure(configure);
         }
 
         /// <summary>
