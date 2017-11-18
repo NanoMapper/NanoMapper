@@ -113,6 +113,7 @@ namespace NanoMapper.Core {
             }
         }
         
+        /// <inheritdoc cref="Mapping.Bindings"/>
         public override IDictionary<PropertyInfo, Delegate> Bindings => _bindings;
 
         private PropertyInfo ExtractPropertyInfoFromPropertyExpression<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) {

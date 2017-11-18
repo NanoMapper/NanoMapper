@@ -2,31 +2,29 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.5</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>Gary Doublé</Authors>
-    <Company>NanoMapper.NET (Gary Doublé)</Company>
+    <Title>NanoMapper.NET</Title>
+    <Company>NanoMapper.NET</Company>
     <Product>NanoMapper.NET</Product>
-    <Copyright>Copyright (c) 2017 NanoMapper.NET (Gary Doublé)</Copyright>
+    <Copyright>Copyright (c) 2017, Gary Doublé</Copyright>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/garydouble/NanoMapper.NET</RepositoryUrl>
     <PackageProjectUrl>https://github.com/garydouble/NanoMapper.NET</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/garydouble/NanoMapper.NET/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageIconUrl>A super-simple object mapping library for .NET</PackageIconUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/garydouble/NanoMapper.NET/master/LICENSE</PackageLicenseUrl>
+    <PackageIconUrl></PackageIconUrl>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <Description>The superbly simple, thread safe object mapping library for .NET</Description>
-    <PackageTags>mapping library threadsafe mapper</PackageTags>
-    <PackageReleaseNotes>${Doublé: Engineering the future; one line at a time...}</PackageReleaseNotes>
+    <PackageTags>thread-safe object mapping</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\Debug\netstandard1.5\NanoMapper.xml</DocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Configurations\**" />
-    <EmbeddedResource Remove="Configurations\**" />
-    <None Remove="Configurations\**" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard1.5\NanoMapper.xml</DocumentationFile>
+  </PropertyGroup>
 
 </Project>

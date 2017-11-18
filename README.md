@@ -2,7 +2,13 @@
 
 The superbly simple, thread-safe object mapping library for .NET
 
+**Package Manager**
+
     PM> Install-Package NanoMapper
+
+**.NET CLI**
+
+    > dotnet add package NanoMapper
 
 ## The basics
 
@@ -12,7 +18,7 @@ This is accomplished using the `ApplyTo(...)` object extension method.
 
     source.ApplyTo(target);
 
-NanoMapper **automatically** matches like for like properties, and, what's even better, NanoMapper caches mappings within containers so multiple `ApplyTo` calls are always **super-fast**.
+NanoMapper **automatically** matches like for like properties and, what is even better, is that NanoMapper caches mappings within containers so multiple `ApplyTo` calls are always **super-fast**.
 
 > Note: Anonymous target types are not supported as they are immutable. However, you can use them as much as you like for source objects.
 
