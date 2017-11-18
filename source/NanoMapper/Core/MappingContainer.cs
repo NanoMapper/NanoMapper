@@ -24,6 +24,10 @@ namespace NanoMapper.Core {
             return new Mapping<TSource, TTarget>((Mapping<TSource, TTarget>)mapping);
         }
 
+        public bool HasMappingFor<TSource, TTarget>() {
+            return _mappings.ContainsKey(new Tuple<Type, Type>(typeof(TSource), typeof(TTarget)));
+        }
+
 
         private readonly ConcurrentDictionary<Tuple<Type, Type>, IMapping> _mappings = new ConcurrentDictionary<Tuple<Type, Type>, IMapping>();
     }

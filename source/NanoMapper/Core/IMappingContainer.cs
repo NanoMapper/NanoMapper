@@ -17,6 +17,14 @@ namespace NanoMapper.Core {
         /// Generates the mapping for the source to target transforms.
         /// </summary>
         Mapping<TSource, TTarget> GenerateMappingFor<TSource, TTarget>();
+
+        /// <summary>
+        /// Determines if this container has a mapping from source types to target types.
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TTarget"></typeparam>
+        /// <returns>true if mapping is configured, false otherwise.</returns>
+        bool HasMappingFor<TSource, TTarget>();
     }
 
 }

@@ -28,8 +28,8 @@ namespace NanoMapper.Core {
     public class Mapping<TSource, TTarget> : Mapping {
 
         public Mapping() {
-            var sourceProps = SourceTypeInfo.GetProperties().Where(p => p.CanRead).ToList();
-            var targetProps = TargetTypeInfo.GetProperties().Where(p => p.CanWrite).ToList();
+            var sourceProps = SourceTypeInfo.GetProperties(BindingFlags).Where(p => p.CanRead).ToList();
+            var targetProps = TargetTypeInfo.GetProperties(BindingFlags).Where(p => p.CanWrite).ToList();
             
             foreach (var targetProperty in targetProps) {
                 var sourceProperty = sourceProps.FirstOrDefault(s => PropertyComparer.Equals(s, targetProperty));
@@ -51,9 +51,15 @@ namespace NanoMapper.Core {
         /// applications.
         /// </summary>
         public Mapping<TSource, TTarget> Property<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) {
-            var propertyInfo = ExtractPropertyInfoFromPropertyExpression(propertyExpression);
+            var targetPropertyInfo = ExtractPropertyInfoFromPropertyExpression(propertyExpression);
 
-            RegisterBinding(propertyInfo, (TSource source) => (TResult)propertyInfo.GetValue(source));
+            // We do this because when the types differ we can't use the target type's PropertyInfo
+            var sourcePropertyInfo =
+                SourceTypeInfo.Equals(TargetTypeInfo) ?
+                targetPropertyInfo :
+                SourceTypeInfo.GetProperty(targetPropertyInfo.Name, BindingFlags);
+
+            RegisterBinding(targetPropertyInfo, (TSource source) => (TResult)sourcePropertyInfo.GetValue(source));
 
             return this;
         }
@@ -116,6 +122,9 @@ namespace NanoMapper.Core {
         
         private static readonly TypeInfo SourceTypeInfo = typeof(TSource).GetTypeInfo();
         private static readonly TypeInfo TargetTypeInfo = typeof(TTarget).GetTypeInfo();
+
+        private static readonly BindingFlags BindingFlags =
+            BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.FlattenHierarchy|BindingFlags.Instance;
     }
 
 }
