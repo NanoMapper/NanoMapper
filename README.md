@@ -108,9 +108,6 @@ Alternatively, a custom `IMappingContainer` implementation can be implemented to
 - Made an improvement? [Create a pull-request](https://github.com/garydouble/NanoMapper.NET)
 - Got a question? [Ask on StackOverflow.com](https://stackoverflow.com/search?q=NanoMapper.NET)
 
+Made with
+<span style="color:crimson;font-size:2em;vertical-align:sub;">&hearts;</span> by [Gary Doublé](http://garydouble.com).  
 Happy Coding!
-
----
-<p style="text-align:center;">Made with
-<span style="color:crimson;font-size:2em;vertical-align:sub;">&hearts;</span> by
-<a href="http://garydouble.com" style="font-weight:bold;" target="_blank">Gary Doublé</a>.</p>
