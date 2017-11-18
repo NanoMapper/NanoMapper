@@ -13,6 +13,9 @@ namespace NanoMapper.Core {
     /// Encapsulates common mapping functionality shared by IMapper implementations.
     /// </summary>
     public abstract class Mapping : IMapping {
+        
+        /// <inheritdoc cref="IMapping.Bindings"/>
+        public abstract IDictionary<PropertyInfo, Delegate> Bindings { get; }
 
         /// <summary>
         /// Provides a property equality comparer
@@ -50,15 +53,12 @@ namespace NanoMapper.Core {
         /// <summary>
         /// Creates a copy of an existing Mapping
         /// </summary>
-        internal Mapping(params Mapping<TSource, TTarget>[] others) {
+        internal Mapping(IEnumerable<KeyValuePair<PropertyInfo, Delegate>> bindings) {
             _bindings = new ConcurrentDictionary<PropertyInfo, Delegate>();
 
-            foreach (var mapping in others.Where(m => m != null)) {
-                foreach (var binding in mapping._bindings) {
-                    _bindings.AddOrUpdate(binding.Key, binding.Value, (x,y) => binding.Value);
-                }
+            foreach (var binding in bindings) {
+                _bindings.AddOrUpdate(binding.Key, binding.Value, (x, y) => binding.Value);
             }
-
         }
 
         /// <summary>
@@ -112,6 +112,8 @@ namespace NanoMapper.Core {
                 binding.Key.SetValue(target, ((Func<TSource, object>)binding.Value).Invoke(source));
             }
         }
+        
+        public override IDictionary<PropertyInfo, Delegate> Bindings => _bindings;
 
         private PropertyInfo ExtractPropertyInfoFromPropertyExpression<TResult>(Expression<Func<TTarget, TResult>> propertyExpression) {
             if (propertyExpression.Body.NodeType == ExpressionType.MemberAccess) {
