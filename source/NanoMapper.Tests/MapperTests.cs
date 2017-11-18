@@ -254,6 +254,28 @@ namespace NanoMapper.Tests {
                 Assert.Equal(source.SourceDescription, target.TargetDescription);
             });
         }
+
+        [Fact]
+        public void GracefullyHandlesNullsOnBothSides() {
+            var source = new SourceClass();
+            var target = new TargetClass();
+            var container = Mappings.CreateContainer();
+            
+            source.ApplyTo((TargetClass)null, container);
+            ((SourceClass)null).ApplyTo(target, container);
+            ((SourceClass)null).ApplyTo((TargetClass)null, container);
+            
+            var newSource = new SourceClass();
+            var newTarget = new TargetClass();
+            
+            Assert.Equal(newSource.Id, source.Id);
+            Assert.Equal(newSource.Name, source.Name);
+            Assert.Equal(newSource.SourceDescription, source.SourceDescription);
+            
+            Assert.Equal(newTarget.Id, target.Id);
+            Assert.Equal(newTarget.Name, target.Name);
+            Assert.Equal(newTarget.TargetDescription, target.TargetDescription);
+        }
     }
 
 

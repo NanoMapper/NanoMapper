@@ -34,6 +34,11 @@ namespace NanoMapper.Extensions {
         public static void ApplyTo<TSource, TTarget>(this TSource source, TTarget target, IMappingContainer container, Action<Mapping<TSource, TTarget>> configure)
             where TSource : class where TTarget : class {
 
+            // Do nothing is either object is null
+            if (source == null || target == null) {
+                return;
+            }
+
             var mapping = container.GenerateMappingFor<TSource, TTarget>();
             
             configure?.Invoke(mapping);
