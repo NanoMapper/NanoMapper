@@ -1,31 +1,24 @@
 # NanoMapper.NET
 
-The superbly simple, thread safe object mapping library for .NET
+The superbly simple, thread-safe object mapping library for .NET
 
     PM> Install-Package NanoMapper
 
 ## The basics
 
-NanoMapper's sole purpose in life is to alleviate the supremely tedious business
-of mapping (applying) some object (the source) to some other object (the target).
+NanoMapper alleviates the supremely tedious business of mapping (applying) one object (the source) onto some other object (the target).
 
 This is accomplished using the `ApplyTo(...)` object extension method.
 
     source.ApplyTo(target);
 
-NanoMapper automatically matches the properties from both sides,
- using their names and types.
+NanoMapper **automatically** matches like for like properties, and, what's even better, NanoMapper caches mappings within containers so multiple `ApplyTo` calls are always **super-fast**.
 
-> Note: Annonymous target types are not supported (yet!) as they are immutable and not compatible with the current implementation. You can however use them as source objects.
+> Note: Anonymous target types are not supported as they are immutable. However, you can use them as much as you like for source objects.
 
-Property analysis is *generally* performed once for any pair of
-source / target type combinations. And once made, the mapping configuration
-is cached so future applications execute super-fast.
+It is recommended t configure most static mappings once, during the application's start-up process using the global `Mappings.Configure(...)` method.
 
-Because of this, it is recommended that most mappings be pre-configured once during
-the application's startup process.
-
-This can be done using the global `Mappings.Configure(...)` method, which takes in a mapping configuration function that defines the property mappings between the source and target types.
+The `Configure(...)` functions take a mapping function that defines the mappings between the source and target types.
 
     // Configure the mapping between SourceType and TargetType objects
     Mappings.Configure<SourceType, TargetType>(map => {
@@ -33,31 +26,29 @@ This can be done using the global `Mappings.Configure(...)` method, which takes 
       ...
     });
 
-#### Mapping properties
+### Mapping properties
 
-By default, properties that exist on both source and target objects that match in both name and type will be automatically mapped and do not require explicit configuration.
+By default, properties that exist on both source and target objects will be automatically mapped (providing they match in name and the source property type is assignable to the target property type).
 
-However, to configure a target's property mapping, we use the `map.Property(...)` method:
+Configure a target's property mapping using the `map.Property(...)` method:
 
     map.Property(t => t.Property, s => s.OtherProperty);
 
-Here the `t` parameter represents the "target", the `s` parameter representing the "source".
+Here the `t` parameter represents the "target" object instance and the `s` parameter represents the "source" object instance.
 
 Property mappings can also be highly complex and don't necessarily have to be simple property to property mappings:
 
-    map.Property(t => t.Property, s => CodeToTranslateSourceTypeToTargetTypeValue(s));
+    map.Property(t => t.Property, s => ComplexFunctionToTranslateSourcePropToTargetProp(s));
 
-#### Ignoring properties
+### Ignoring properties
 
-Properties we want to omit from being automatically applied should be "ignored":
+Properties we want to omit from being automatically mapped should be "ignored":
 
     map.Ignore(t => t.Property);
 
 #### Local mapping overrides
 
-To configure "on-the-fly" mappings we use an
-`ApplyTo(...)` method overload that allows us to pass in an additional
-mapping configuration function:
+To configure "on-the-fly" mappings we use an `ApplyTo(...)` overload that allows us to pass in an additional mapping configuration function:
 
     // Apply the object using specific mapping overrides
     source.ApplyTo(target, map => { ... });
@@ -67,7 +58,7 @@ This is especially useful when you need to include properties that are currently
     // Map this property
     map.Property(t => t.Property, ...);
 
-## Testing / DI compatibility
+## Containers
 
 The default `ApplyTo(...)` method uses the global container instance.
 
@@ -82,9 +73,7 @@ In times when it is necessary to avoid using static constructs, such as during t
     // Use the container
     source.ApplyTo(target, container);
 
-Instance containers do not access the global mappings by default.
-In order to utilise any globally defined mappings we need to pass the 
-`enableGlobalMappings` argument as `true`.
+Instance containers do not access the global mappings by default. In order to utilise any globally defined mappings we need to pass the `enableGlobalMappings` argument as `true`.
 
 In doing so the container will check the global cache for existing mapping configurations and apply them first before any instance or overriding mappings.
 
@@ -105,15 +94,17 @@ Alternatively, a custom `IMappingContainer` implementation can be implemented to
     // Use the container
     source.ApplyTo(target, new CustomMappingContainer(...));
     
-<hr />
+## Contributions and Support
 
 *NanoMapper.NET is free, open-source software.* ([MIT](https://raw.githubusercontent.com/garydouble/NanoMapper.NET/master/LICENSE))
 
-[Issues](https://github.com/garydouble/NanoMapper.NET/issues),
-[feedback](mailto:garydouble@live.com) and
-[pull requests](https://github.com/garydouble/NanoMapper.NET) all welcome.  
+- Found a bug? [Raise an issue](https://github.com/garydouble/NanoMapper.NET/issues)
+- Made an improvement? [Create a pull-request](https://github.com/garydouble/NanoMapper.NET)
+- Got a question? [Ask on StackOverflow.com](https://stackoverflow.com/search?q=NanoMapper.NET)
+
 Happy Coding!
 
+---
 <p style="text-align:center;">Made with
 <span style="color:crimson;font-size:2em;vertical-align:sub;">&hearts;</span> by
 <a href="http://garydouble.com" style="font-weight:bold;" target="_blank">Gary Doublé</a>.</p>
