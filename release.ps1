@@ -1,6 +1,5 @@
 
-param([string]$versionSuffix="")
-param([string]$apiKey="")
+param([string]$versionSuffix="",[string]$apiKey="");
 
 
 rm dist/*
