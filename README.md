@@ -26,12 +26,12 @@ NanoMapper **automatically** matches like for like properties and, what is even 
 
 > Note: Anonymous target types are not supported as they are immutable. However, you can use them as much as you like for source objects.
 
-It is recommended t configure most static mappings once, during the application's start-up process using the global `Mappings.Configure(...)` method.
+To configure mappings once during the application's start-up process use the global `Mappings.Configure<Source, Target>(...)` method.
 
-The `Configure(...)` functions take a mapping function that defines the mappings between the source and target types.
+The `Configure<Source, Target>(...)` methods take mapping functions that defines the mappings between the source and target types.
 
     // Configure the mapping between SourceType and TargetType objects
-    Mappings.Configure<SourceType, TargetType>(map => {
+    Mappings.Configure<Source, Target>(map => {
       map.Property(...);
       ...
     });
@@ -42,17 +42,21 @@ By default, properties that exist on both source and target objects will be auto
 
 Configure a target's property mapping using the `map.Property(...)` method:
 
-    map.Property(t => t.Property, s => s.OtherProperty);
+    Mappings.Configure<Source, Target>(map => {
+        map.Property(t => t.Property, s => s.OtherProperty);
+    });
 
-Here the `t` parameter represents the "target" object instance and the `s` parameter represents the "source" object instance.
+Here the `t` represents the "target" object instance and the `s` represents the "source" object instance.
 
 Property mappings can also be highly complex and don't necessarily have to be simple property to property mappings:
 
-    map.Property(t => t.Property, s => ComplexFunctionToTranslateSourcePropToTargetProp(s));
+    Mappings.Configure<Source, Target>(map => {
+        map.Property(t => t.Property, s => ComplexFunctionToTranslateSourcePropToTargetProp(s));
+    });
 
 ### Ignoring properties
 
-Properties we want to omit from being automatically mapped should be "ignored":
+Properties we want to omit from being automatically mapped can be "ignored":
 
     map.Ignore(t => t.Property);
 
