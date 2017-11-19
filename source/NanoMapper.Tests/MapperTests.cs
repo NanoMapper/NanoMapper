@@ -1,8 +1,6 @@
+using NanoMapper.Exceptions;
 using System.Globalization;
 using System.Threading.Tasks;
-using NanoMapper.Core;
-using NanoMapper.Exceptions;
-using NanoMapper.Extensions;
 using Xunit;
 
 namespace NanoMapper.Tests {
@@ -240,7 +238,7 @@ namespace NanoMapper.Tests {
             Parallel.For(0, 100000, i => {
                 var source = new SourceClass();
                 var target = new TargetClass();
-                
+
                 container.Configure<SourceClass, TargetClass>(map => {
                     map.Property(t => t.Id, s => s.Id.ToString(CultureInfo.InvariantCulture));
                 });
@@ -260,18 +258,18 @@ namespace NanoMapper.Tests {
             var source = new SourceClass();
             var target = new TargetClass();
             var container = Mappings.CreateContainer();
-            
+
             source.ApplyTo((TargetClass)null, container);
             ((SourceClass)null).ApplyTo(target, container);
             ((SourceClass)null).ApplyTo((TargetClass)null, container);
-            
+
             var newSource = new SourceClass();
             var newTarget = new TargetClass();
-            
+
             Assert.Equal(newSource.Id, source.Id);
             Assert.Equal(newSource.Name, source.Name);
             Assert.Equal(newSource.SourceDescription, source.SourceDescription);
-            
+
             Assert.Equal(newTarget.Id, target.Id);
             Assert.Equal(newTarget.Name, target.Name);
             Assert.Equal(newTarget.TargetDescription, target.TargetDescription);

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace NanoMapper.Core {
+namespace NanoMapper {
 
     /// <summary>
     /// Represents a generic mapping.

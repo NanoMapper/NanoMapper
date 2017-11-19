@@ -1,18 +1,26 @@
 ﻿using System;
 using System.Threading;
 
-namespace NanoMapper.Core {
+namespace NanoMapper {
 
     /// <summary>
     /// Global mappings container entry point.
     /// </summary>
     public static class Mappings {
-
+        
         /// <summary>
         /// Creates a new instance of a mapping container
         /// </summary>
         public static IMappingContainer CreateContainer(bool enableGlobalMappings = false) {
             return new MappingContainer(enableGlobalMappings ? GlobalContainer : null);
+        }
+
+        
+        /// <summary>
+        /// Creates a new instance of a mapping container that references the given parent container.
+        /// </summary>
+        public static IMappingContainer CreateContainer(IMappingContainer container) {
+            return new MappingContainer(container);
         }
 
         /// <summary>

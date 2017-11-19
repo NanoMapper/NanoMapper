@@ -1,7 +1,6 @@
-﻿using NanoMapper.Core;
-using System;
+﻿using System;
 
-namespace NanoMapper.Extensions {
+namespace NanoMapper {
 
     /// <summary>
     /// Provides object entry point extensions that exposes the ApplyTo(...) mapping application method.

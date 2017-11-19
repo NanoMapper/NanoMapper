@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NanoMapper.Core {
+namespace NanoMapper {
 
     /// <summary>
     /// Represents an object that contains type mappings.

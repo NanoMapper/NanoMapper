@@ -14,9 +14,13 @@ The superbly simple, thread-safe object mapping library for .NET
 
 NanoMapper alleviates the supremely tedious business of mapping (applying) one object (the source) onto some other object (the target).
 
-This is accomplished using the `ApplyTo(...)` object extension method.
+This is accomplished using the `ApplyTo(...)` object extension method found in the `NanoMapper` namespace.
 
-    source.ApplyTo(target);
+    using NanoMapper;
+
+    ... {
+      source.ApplyTo(target);
+    }
 
 NanoMapper **automatically** matches like for like properties and, what is even better, is that NanoMapper caches mappings within containers so multiple `ApplyTo` calls are always **super-fast**.
 
@@ -79,7 +83,7 @@ In times when it is necessary to avoid using static constructs, such as during t
     // Use the container
     source.ApplyTo(target, container);
 
-Instance containers do not access the global mappings by default. In order to utilise any globally defined mappings we need to pass the `enableGlobalMappings` argument as `true`.
+Instance containers do not access the global mappings by default. To utilise globally mappings we pass `enableGlobalMappings: true` to the container creation method.
 
 In doing so the container will check the global cache for existing mapping configurations and apply them first before any instance or overriding mappings.
 
@@ -92,13 +96,22 @@ In doing so the container will check the global cache for existing mapping confi
     // Use the container
     source.ApplyTo(target, container);
 
-Alternatively, a custom `IMappingContainer` implementation can be implemented to suit any specific needs.
+Alternatively, you can pass in any instance of an `IMappingContainer` implementation to use as the parent container.
 
     // Define a new container
     class CustomMappingContainer : IMappingContainer { }
 
-    // Use the container
-    source.ApplyTo(target, new CustomMappingContainer(...));
+    // Create the custom (parent) container
+    var customContainer = new CustomMappingContainer(...);
+
+    // Create a standard container that uses the custom one
+    var container = Mappings.CreateContainer(customContainer);
+
+    // Use the container(s)
+    source.ApplyTo(target, container);
+
+    // or use the custom one directly
+    source.ApplyTo(target, customContainer);
     
 ## Contributions and Support
 

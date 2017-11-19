@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using NanoMapper.Exceptions;
 
-namespace NanoMapper.Core {
+namespace NanoMapper {
 
     /// <summary>
     /// Encapsulates common mapping functionality shared by IMapper implementations.
@@ -108,7 +108,7 @@ namespace NanoMapper.Core {
         /// Applies the configured mappings from the source object onto the target object.
         /// </summary>
         public void Apply(TSource source, TTarget target) {
-            foreach (var binding in this._bindings) {
+            foreach (var binding in _bindings) {
                 binding.Key.SetValue(target, ((Func<TSource, object>)binding.Value).Invoke(source));
             }
         }

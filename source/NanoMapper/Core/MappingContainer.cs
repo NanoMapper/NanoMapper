@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Linq;
 
-namespace NanoMapper.Core {
+namespace NanoMapper {
 
     /// <summary>
     /// Provides a default IMappingContainer implementation.
