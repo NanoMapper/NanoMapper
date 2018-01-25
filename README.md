@@ -12,7 +12,7 @@ A superbly simple, object-to-object mapping library for .NET
 
 ## The basics
 
-`NanoMapper.NET` alleviates the supremely tedious business of mapping (applying) one object (the source) onto another object (the target).
+NanoMapper alleviates the supremely tedious business of mapping (applying) one object (the source) onto another object (the target).
 
 This is accomplished using the `ApplyTo(...)` object extension method found in the `NanoMapper` namespace.
 
@@ -22,7 +22,7 @@ This is accomplished using the `ApplyTo(...)` object extension method found in t
       source.ApplyTo(target);
     }
 
-`NanoMapper.NET` **automagically** matches like-for-like properties based on names and property type covariance.
+NanoMapper **automagically** matches like-for-like properties based on names and property type covariance.
 
 > Note: Anonymous types are immutable and not supported as targets (yet) but can be used as source objects.
 
@@ -40,7 +40,7 @@ Mappings can be configured at the following levels, ordered by precedence.
 
 ### Mapping properties
 
-`NanoMapper.NET` matches properties based on their names and property type covariance; properties that exist on both source and target types where the names match where each source property type is assignable to the target property type are automatically mapped, no explicit configuration required.
+NanoMapper matches properties based on their names and property type covariance; properties that exist on both source and target types where the names match where each source property type is assignable to the target property type are automatically mapped, no explicit configuration required.
 
 Configure a source-to-target property mapping using the `map.Property(...)` method:
 
@@ -63,7 +63,7 @@ When you need to include properties that are currently being ignored you can alw
 
 ## Containers
 
-By default, `NanoMapper.NET` caches mappings within containers so multiple class to the `ApplyTo(...)` methods execute **super-fast**.
+By default, NanoMapper caches mappings within containers so multiple class to the `ApplyTo(...)` methods execute **super-fast**.
 
 The standard `ApplyTo(...)` method uses the global container instance cache.
 
