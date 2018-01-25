@@ -1,6 +1,6 @@
 # NanoMapper.NET
 
-The superbly simple, thread-safe object mapping library for .NET
+A superbly simple, object-to-object mapping library for .NET
 
 **Package Manager**
 
@@ -12,7 +12,7 @@ The superbly simple, thread-safe object mapping library for .NET
 
 ## The basics
 
-NanoMapper alleviates the supremely tedious business of mapping (applying) one object (the source) onto some other object (the target).
+`NanoMapper.NET` alleviates the supremely tedious business of mapping (applying) one object (the source) onto another object (the target).
 
 This is accomplished using the `ApplyTo(...)` object extension method found in the `NanoMapper` namespace.
 
@@ -22,72 +22,63 @@ This is accomplished using the `ApplyTo(...)` object extension method found in t
       source.ApplyTo(target);
     }
 
-NanoMapper **automatically** matches like for like properties and, what is even better, is that NanoMapper caches mappings within containers so multiple `ApplyTo` calls are always **super-fast**.
+`NanoMapper.NET` **automagically** matches like-for-like properties based on names and property type covariance.
 
-> Note: Anonymous target types are not supported as they are immutable. However, you can use them as much as you like for source objects.
+> Note: Anonymous types are immutable and not supported as targets (yet) but can be used as source objects.
 
-To configure mappings once during the application's start-up process use the global `Mappings.Configure<Source, Target>(...)` method.
+### Configuration
 
-The `Configure<Source, Target>(...)` methods take mapping functions that defines the mappings between the source and target types.
+All mappings are configured using simple mapping functions which define explicit transforms between source properties and target properties.
 
-    // Configure the mapping between SourceType and TargetType objects
-    Mappings.Configure<Source, Target>(map => {
-      map.Property(...);
-      ...
-    });
+Mappings can be configured at the following levels, ordered by precedence.
+
+1. at the instance level using `source.ApplyTo(target, map => { ... })`
+2. at the [container](#containers) level using `container.Configure<Source, Target>(map => { ... })`
+3. or globally using `Mappings.Configure<Source, Target>(map => { ... })`
+
+> Note: It is a wise practice to only configuring global mappings once during application start-up.
 
 ### Mapping properties
 
-By default, properties that exist on both source and target objects will be automatically mapped (providing they match in name and the source property type is assignable to the target property type).
+`NanoMapper.NET` matches properties based on their names and property type covariance; properties that exist on both source and target types where the names match where each source property type is assignable to the target property type are automatically mapped, no explicit configuration required.
 
-Configure a target's property mapping using the `map.Property(...)` method:
+Configure a source-to-target property mapping using the `map.Property(...)` method:
 
-    Mappings.Configure<Source, Target>(map => {
-        map.Property(t => t.Property, s => s.OtherProperty);
-    });
+    map.Property(target => target.Property, source => source.OtherProperty);
 
-Here the `t` represents the "target" object instance and the `s` represents the "source" object instance.
+Property mappings can be highly complex and don't necessarily have to be straight mappings:
 
-Property mappings can also be highly complex and don't necessarily have to be simple property to property mappings:
-
-    Mappings.Configure<Source, Target>(map => {
-        map.Property(t => t.Property, s => ComplexFunctionToTranslateSourcePropToTargetProp(s));
-    });
+    map.Property(target => target.Property, source => (source.Abc + source.Xyz).ToString();
 
 ### Ignoring properties
 
 Properties we want to omit from being automatically mapped can be "ignored":
 
-    map.Ignore(t => t.Property);
+    map.Ignore(target => target.Property);
 
-#### Local mapping overrides
-
-To configure "on-the-fly" mappings we use an `ApplyTo(...)` overload that allows us to pass in an additional mapping configuration function:
-
-    // Apply the object using specific mapping overrides
-    source.ApplyTo(target, map => { ... });
-
-This is especially useful when you need to include properties that are currently being ignored:
+When you need to include properties that are currently being ignored you can always include them back in:
 
     // Map this property
-    map.Property(t => t.Property, ...);
+    map.Property(target => target.Property, ...);
 
 ## Containers
 
-The default `ApplyTo(...)` method uses the global container instance.
+By default, `NanoMapper.NET` caches mappings within containers so multiple class to the `ApplyTo(...)` methods execute **super-fast**.
 
-In times when it is necessary to avoid using static constructs, such as during testing or integrating with systems that rely on dependency injection / IoC containers, we can create a new `IMappingContainer` instance and pass that to the `ApplyTo(...)` method instead:
+The standard `ApplyTo(...)` method uses the global container instance cache.
+
+In times when it is necessary to avoid using static constructs, such as during isolated testing or integrating with systems that use / promote dependency injection / IoC containers, we can create a new `IMappingContainer` instance and pass that to the `ApplyTo(...)` method instead:
 
     // Create a new container instance
     var container = Mappings.CreateContainer();
 
     // Configure some mappings
-    container.Configure<SourceType, TargetType>(map => { ... });
+    container.Configure<Source, Target>(map => { ... });
 
     // Use the container
     source.ApplyTo(target, container);
 
-Instance containers do not access the global mappings by default. To utilise globally mappings we pass `enableGlobalMappings: true` to the container creation method.
+By design, instance containers do **not** access the global mappings by default. To utilise globally mappings we pass `enableGlobalMappings: true` to the container creation method.
 
 In doing so the container will check the global cache for existing mapping configurations and apply them first before any instance or overriding mappings.
 
@@ -95,7 +86,7 @@ In doing so the container will check the global cache for existing mapping confi
     var container = Mappings.CreateContainer(enableGlobalMappings: true);
 
     // Configure some mappings
-    container.Configure<SourceType, TargetType>(map => { ... });
+    container.Configure<Source, Target>(map => { ... });
 
     // Use the container
     source.ApplyTo(target, container);
@@ -119,12 +110,12 @@ Alternatively, you can pass in any instance of an `IMappingContainer` implementa
     
 ## Contributions and Support
 
-*NanoMapper.NET is free, open-source software.* ([MIT](https://raw.githubusercontent.com/garydouble/NanoMapper.NET/master/LICENSE))
+*NanoMapper.NET is free, open-source software.* ([ISC](https://raw.githubusercontent.com/garydouble/NanoMapper.NET/master/LICENSE))
 
 - Found a bug? [Raise an issue](https://github.com/garydouble/NanoMapper.NET/issues)
 - Made an improvement? [Create a pull-request](https://github.com/garydouble/NanoMapper.NET)
-- Got a question? [Ask on StackOverflow.com](https://stackoverflow.com/search?q=NanoMapper.NET)
+- Need some help? [Ask on StackOverflow.com](https://stackoverflow.com/search?q=NanoMapper.NET)
 
 Made with
-<span style="color:crimson;font-size:2em;vertical-align:sub;">&hearts;</span> by [Gary Doublé](http://garydouble.com).  
+<span style="color:crimson;font-size:2em;vertical-align:sub;">&hearts;</span> by [Gary Doubl&eacute;](http://garydouble.com).  
 Happy Coding!
