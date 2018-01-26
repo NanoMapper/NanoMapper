@@ -15,8 +15,8 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/garydouble/NanoMapper.NET/master/LICENSE</PackageLicenseUrl>
     <PackageIconUrl></PackageIconUrl>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <Description>A superbly simple, thread-safe, object-to-object mapping library for .NET</Description>
-    <PackageTags>nanomapper thread-safe object mapping</PackageTags>
+    <Description>A superbly simple, object-to-object mapping library for .NET</Description>
+    <PackageTags>nanomapper object mapping</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
