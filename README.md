@@ -63,7 +63,7 @@ When you need to include properties that are currently being ignored you can alw
 
 ## Containers
 
-By default, NanoMapper caches mappings within containers so multiple class to the `ApplyTo(...)` methods execute **super-fast**.
+By default, NanoMapper caches mappings within containers so multiple calls to the `ApplyTo(...)` methods execute **super-fast**.
 
 The standard `ApplyTo(...)` method uses the global container instance cache.
 
