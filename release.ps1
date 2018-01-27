@@ -1,14 +1,15 @@
 
-param([string]$versionSuffix="",[string]$apiKey="");
+param([string]$apiKey, [sttring]$version, [string]$versionSuffix="");
 
-
-rm dist/*
+rm dist/* -Force -Recurse
 
 if ($versionSuffix -ne "") {
-  dotnet pack source -c Debug --include-symbols --include-source --version-suffix $versionSuffix -o ../../dist
+  dotnet pack /p:PackageVersion=$version source -c Debug --include-symbols --include-source --version-suffix $versionSuffix -o ../../dist
 }
 else {
-  dotnet pack source -c Release --include-symbols --include-source -o ../../dist
+  dotnet pack /p:PackageVersion=$version source -c Release --include-symbols --include-source -o ../../dist
 }
 
 nuget push ".\dist\*.nupkg" -src https://api.nuget.org/v3/index.json -ApiKey $apiKey
+git tag $version
+git push --tags
