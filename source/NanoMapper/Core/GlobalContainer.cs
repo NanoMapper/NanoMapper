@@ -26,10 +26,15 @@ namespace NanoMapper {
         /// <summary>
         /// Configures the mappings from source types to target types against the global mapping cache.
         /// </summary>
-        /// <param name="configure">A mapping configuration function</param>
-        public static IMappingContainer Configure<TSource, TTarget>(Action<Mapping<TSource, TTarget>> configure) where TSource : class where TTarget : class {
-            return GlobalContainer.Configure(configure);
+        /// <param name="map">A mapping configuration function</param>
+        public static IMappingContainer Map<TSource, TTarget>(Action<Mapping<TSource, TTarget>> map) where TSource : class where TTarget : class {
+            return GlobalContainer.Map(map);
         }
+        
+        /// <see cref="Map{TSource,TTarget}"/>
+        [Obsolete("Use Map(...) instead")]
+        public static IMappingContainer Configure<TSource, TTarget>(Action<Mapping<TSource, TTarget>> map) where TSource : class where TTarget : class
+            => Map(map);
 
         /// <summary>
         /// Singleton global container instance

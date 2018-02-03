@@ -17,12 +17,18 @@ namespace NanoMapper {
             _parentContainer = parentContainer;
         }
 
-        public IMappingContainer Configure<TSource, TTarget>(Action<Mapping<TSource, TTarget>> configure) where TSource : class where TTarget : class {
-            if (configure == null) throw new ArgumentNullException(nameof(configure));
+        
+        /// <see cref="Map{TSource,TTarget}"/>
+        [Obsolete("Use Map(...) instead")]
+        public IMappingContainer Configure<TSource, TTarget>(Action<Mapping<TSource, TTarget>> map) where TSource : class where TTarget : class
+            => Map(map);
+
+        public IMappingContainer Map<TSource, TTarget>(Action<Mapping<TSource, TTarget>> map) where TSource : class where TTarget : class {
+            if (map == null) throw new ArgumentNullException(nameof(map));
 
             var mapping = _mappings.GetOrAdd(new Tuple<Type, Type>(typeof(TSource), typeof(TTarget)), new Mapping<TSource, TTarget>(_parentContainer == null));
 
-            configure((Mapping<TSource, TTarget>)mapping);
+            map((Mapping<TSource, TTarget>)mapping);
 
             return this;
         }

@@ -7,13 +7,17 @@ namespace NanoMapper {
     /// </summary>
     public interface IMappingContainer {
 
+        /// <see cref="Map{TSource,TTarget}"/>
+        [Obsolete("Use Map(...) instead")]
+        IMappingContainer Configure<TSource, TTarget>(Action<Mapping<TSource, TTarget>> map) where TSource : class where TTarget : class;
+        
         /// <summary>
         /// Configures the mappings from source types to target types.
         /// </summary>
-        /// <param name="configure">A mapping configuration function</param>
+        /// <param name="map">A mapping configuration function</param>
         /// <returns>The same instance so method chaining is possible</returns>
-        IMappingContainer Configure<TSource, TTarget>(Action<Mapping<TSource, TTarget>> configure) where TSource : class where TTarget : class;
-
+        IMappingContainer Map<TSource, TTarget>(Action<Mapping<TSource, TTarget>> map) where TSource : class where TTarget : class;
+        
         /// <summary>
         /// Generates the mapping for the source to target transforms.
         /// </summary>
@@ -24,7 +28,7 @@ namespace NanoMapper {
         /// </summary>
         /// <typeparam name="TSource"></typeparam>
         /// <typeparam name="TTarget"></typeparam>
-        /// <returns>true if mapping is configured, false otherwise.</returns>
+        /// <returns>true if a mapping is configured, false otherwise.</returns>
         bool HasMappingFor<TSource, TTarget>();
     }
 
