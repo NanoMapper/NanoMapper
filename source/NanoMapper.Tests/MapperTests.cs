@@ -1,5 +1,6 @@
 using NanoMapper.Exceptions;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -274,6 +275,37 @@ namespace NanoMapper.Tests {
             Assert.Equal(newTarget.Name, target.Name);
             Assert.Equal(newTarget.TargetDescription, target.TargetDescription);
         }
+        
+        [Fact]
+        public void TargetIsReturnedFromApplyTo() {
+            var source = new SourceClass();
+            var target = new TargetClass();
+            
+            var container = Mappings.CreateContainer();
+
+            var appliedTarget = source.ApplyTo(target, container);
+
+            Assert.Same(target, appliedTarget);
+            Assert.Equal(source.Name, target.Name);
+        }
+        
+        [Fact]
+        public void ApplyToCanBeUsedInBasicLinqSelectExpression() {
+            var sources = new[] {
+                new SourceClass(),
+                new SourceClass(),
+                new SourceClass()
+            };
+
+            var container = Mappings.CreateContainer();
+
+            var targets = sources.Select(s => s.ApplyTo(new TargetClass(), container)).ToList();
+            
+            for (var i = 0; i < sources.Length; i++) {
+                Assert.Equal(sources[i].Name, targets[i].Name);
+            }
+        }
+
     }
 
 
