@@ -16,7 +16,7 @@
     <PackageIconUrl></PackageIconUrl>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <Description>A superbly simple, object-to-object mapping library for .NET</Description>
-    <PackageTags>nanomapper object mapping</PackageTags>
+    <PackageTags>nanomapper object mapper cloner</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
