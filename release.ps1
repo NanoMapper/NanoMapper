@@ -8,6 +8,7 @@ if ($versionSuffix -ne "") {
 }
 else {
   dotnet pack /p:PackageVersion=$version source -c Release --include-symbols --include-source -o ../../dist
+  git push
   git tag $version
   git push --tags
 }
