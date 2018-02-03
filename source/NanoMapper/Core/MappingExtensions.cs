@@ -12,7 +12,7 @@ namespace NanoMapper {
         /// </summary>
         public static TTarget Map<TSource, TTarget>(this TSource source, TTarget target)
             where TSource : class where TTarget : class
-            => Map(source, target, Mappings.GlobalContainer);
+            => Map(source, target, Mapper.GlobalContainer);
 
         /// <summary>
         /// Applies all applicable property values from the source object onto the target object
@@ -20,7 +20,7 @@ namespace NanoMapper {
         /// </summary>
         public static TTarget Map<TSource, TTarget>(this TSource source, TTarget target, Action<Mapping<TSource, TTarget>> map)
             where TSource : class where TTarget : class
-            => Map(source, target, Mappings.GlobalContainer, map);
+            => Map(source, target, Mapper.GlobalContainer, map);
 
         /// <summary>
         /// Applies all applicable property values from the source object onto the target object
@@ -56,13 +56,13 @@ namespace NanoMapper {
         [Obsolete("Use Map(...) instead")]
         public static TTarget ApplyTo<TSource, TTarget>(this TSource source, TTarget target)
             where TSource : class where TTarget : class
-            => Map(source, target, Mappings.GlobalContainer);
+            => Map(source, target, Mapper.GlobalContainer);
         
         /// <see cref="Map{TSource,TTarget}(TSource,TTarget)"/>
         [Obsolete("Use Map(...) instead")]
         public static TTarget ApplyTo<TSource, TTarget>(this TSource source, TTarget target, Action<Mapping<TSource, TTarget>> map)
             where TSource : class where TTarget : class
-            => Map(source, target, Mappings.GlobalContainer, map);
+            => Map(source, target, Mapper.GlobalContainer, map);
         
         /// <see cref="Map{TSource,TTarget}(TSource,TTarget)"/>
         [Obsolete("Use Map(...) instead")]

@@ -2,11 +2,11 @@
 using System.Threading;
 
 namespace NanoMapper {
-
+    
     /// <summary>
     /// Global mappings container entry point.
     /// </summary>
-    public static class Mappings {
+    public static class Mapper {
         
         /// <summary>
         /// Creates a new instance of a mapping container
@@ -47,4 +47,31 @@ namespace NanoMapper {
         private static readonly Lazy<MappingContainer> _staticContainer = new Lazy<MappingContainer>(LazyThreadSafetyMode.PublicationOnly);
     }
 
+
+    
+    /// <see cref="Mapper"/>
+    [Obsolete("Use Mapper instead")]
+    public static class Mappings {
+        
+        /// <see cref="Mapper.CreateContainer(bool)"/>
+        [Obsolete("Use Mapper.CreateContainer(...) instead")]
+        public static IMappingContainer CreateContainer(bool enableGlobalMappings = false)
+            => Mapper.CreateContainer(enableGlobalMappings);
+        
+        /// <see cref="Mapper.CreateContainer(IMappingContainer)"/>
+        [Obsolete("Use Mapper.CreateContainer(...) instead")]
+        public static IMappingContainer CreateContainer(IMappingContainer container)
+            => Mapper.CreateContainer(container);
+        
+        /// <see cref="Mapper.Map{TSource,TTarget}"/>
+        [Obsolete("Use Mapper.Map(...) instead")]
+        public static IMappingContainer Map<TSource, TTarget>(Action<Mapping<TSource, TTarget>> map) where TSource : class where TTarget : class
+            => Mapper.Map(map);
+        
+        /// <see cref="Map{TSource,TTarget}"/>
+        [Obsolete("Use Map(...) instead")]
+        public static IMappingContainer Configure<TSource, TTarget>(Action<Mapping<TSource, TTarget>> map) where TSource : class where TTarget : class
+            => Mapper.Map(map);
+    }
+    
 }

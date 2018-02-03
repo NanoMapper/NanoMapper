@@ -12,13 +12,13 @@ namespace NanoMapper.Tests {
         public void StaticMappingScenarioTest() {
             const string GLOBAL_MAPPING_NAME_VALUE = "GLOBAL MAPPING VALUE";
 
-            Assert.False(Mappings.GlobalContainer.HasMappingFor<SourceClass, TargetClass>());
+            Assert.False(Mapper.GlobalContainer.HasMappingFor<SourceClass, TargetClass>());
 
             Mappings.Configure<SourceClass, TargetClass>(map => {
                 map.Property(t => t.Name, s => GLOBAL_MAPPING_NAME_VALUE);
             });
 
-            Assert.True(Mappings.GlobalContainer.HasMappingFor<SourceClass, TargetClass>());
+            Assert.True(Mapper.GlobalContainer.HasMappingFor<SourceClass, TargetClass>());
 
             var source = new SourceClass();
             var target = new TargetClass();
