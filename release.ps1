@@ -13,4 +13,4 @@ else {
   git push --tags
 }
 
-nuget push ".\dist\*.nupkg" -src https://api.nuget.org/v3/index.json -ApiKey $apiKey
+nuget push ".\dist\*.symbols.nupkg" -src https://api.nuget.org/v3/index.json -ApiKey $apiKey
